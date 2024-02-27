@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Model Prediction</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        video {
+            max-width: 90%;
+            border-radius: 15px;
+            /* Rounded corners */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        button {
+            margin: 20px 0;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: white;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .food-info {
+            width: 40%;
+            margin: 0 auto;
+            /* Centers the box horizontally */
+            max-width: 600px;
+            /* Limits maximum width for larger screens */
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            margin-top: 20px;
+            background-color: #f9f9f9;
+        }
+
+        .food-info-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .food-info-description {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .food-info-table {
+            font-size: 16px;
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .food-info-table th,
+        .food-info-table td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .food-info-table th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+
+        .food-info-table td:first-child {
+            width: 150px;
+        }
+
+        .instruction-text {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h2>Scan food item</h2>
+
+    <video id="video" autoplay playsinline></video>
+
+    <div class="instruction-text">
+        Place the food item inside the box to detect the nutritional value
+    </div>
+
+    <div class="food-info hidden" id="Potato-info">
+        <div class="food-info-title">Potato</div>
+        <div class="food-info-description">
+            The potato is a starchy root vegetable native to the Americas that is consumed as a staple food in many
+            parts of the world. Potatoes are tubers of the plant Solanum tuberosum, a perennial in the nightshade family
+            Solanaceae.
+        </div>
+        <table class="food-info-table">
+            <tr>
+                <th>Values per 100g</th>
+            </tr>
+            <tr>
+                <td>Cal</td>
+                <td>161</td>
+            </tr>
+            <tr>
+                <td>Carbohydrates</td>
+                <td>37g</td>
+            </tr>
+            <tr>
+                <td>Fat</td>
+                <td>0.2g</td>
+            </tr>
+            <tr>
+                <td>Protein</td>
+                <td>4.3g</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="food-info hidden" id="Apple-info">
+        <div class="food-info-title">Apple</div>
+        <div class="food-info-description">
+            An apple is a round, edible fruit produced by an apple tree (Malus spp., among them the domestic or orchard
+            apple; Malus domestica).
+        </div>
+        <table class="food-info-table">
+            <tr>
+                <th>Values per 100g</th>
+            </tr>
+            <tr>
+                <td>Cal</td>
+                <td>95</td>
+            </tr>
+            <tr>
+                <td>Carbohydrates</td>
+                <td>25g</td>
+            </tr>
+            <tr>
+                <td>Fat</td>
+                <td>0.3g</td>
+            </tr>
+            <tr>
+                <td>Protein</td>
+                <td>0.5g</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="food-info hidden" id="Orange-info">
+        <div class="food-info-title">Orange</div>
+        <div class="food-info-description">
+            The orange is the fruit of various citrus species in the family Rutaceae; it primarily refers to Citrus ×
+            sinensis, which is also called sweet orange, to distinguish it from the related Citrus × aurantium, referred
+            to as bitter orange.
+        </div>
+        <table class="food-info-table">
+            <tr>
+                <th>Values per 100g</th>
+            </tr>
+            <tr>
+                <td>Cal</td>
+                <td>43</td>
+            </tr>
+            <tr>
+                <td>Carbohydrates</td>
+                <td>9g</td>
+            </tr>
+            <tr>
+                <td>Fat</td>
+                <td>0.2g</td>
+            </tr>
+            <tr>
+                <td>Protein</td>
+                <td>1g</td>
+            </tr>
+        </table>
+
+    </div>
+
+    <div class="food-info hidden" id="Onions-info">
+        <div class="food-info-title">Onions</div>
+        <div class="food-info-description">
+            The onion, also known as the bulb onion or common onion, is a vegetable that is the most widely cultivated
+            species of the genus Allium. Its close relatives include the garlic, scallion, shallot, leek, chive, and
+            Chinese onion.
+        </div>
+        <table class="food-info-table">
+            <tr>
+                <th>Values per 100g</th>
+            </tr>
+            <tr>
+                <td>Cal</td>
+                <td>40</td>
+            </tr>
+            <tr>
+                <td>Carbohydrates</td>
+                <td>9g</td>
+            </tr>
+            <tr>
+                <td>Fat</td>
+                <td>0.1g</td>
+            </tr>
+            <tr>
+                <td>Protein</td>
+                <td>1.1g</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="food-info hidden" id="Carrot-info">
+        <div class="food-info-title">Carrot</div>
+        <div class="food-info-description">
+            The carrot is a root vegetable, usually orange in color, though purple, black, red, white, and yellow
+            cultivars exist. They are a domesticated form of the wild carrot, Daucus carota, native to Europe and
+            Southwestern Asia.
+        </div>
+        <table class="food-info-table">
+            <tr>
+                <th>Values per 100g</th>
+            </tr>
+            <tr>
+                <td>Cal</td>
+                <td>41</td>
+            </tr>
+            <tr>
+                <td>Carbohydrates</td>
+                <td>10g</td>
+            </tr>
+            <tr>
+                <td>Fat</td>
+                <td>0.2g</td>
+            </tr>
+            <tr>
+                <td>Protein</td>
+                <td>0.9g</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="food-info hidden" id="Extra-info">
+        <div class="food-info-title">Extra</div>
+        <div class="food-info-description">
+            This is an extra class that is not part of the original classes. It is used to test the model's ability to
+            predict unknown classes.
+        </div>
+        <table class="food-info-table">
+            <tr>
+                <th>Values per 100g</th>
+            </tr>
+            <tr>
+                <td>Cal</td>
+                <td>100</td>
+            </tr>
+            <tr>
+                <td>Carbohydrates</td>
+                <td>20g</td>
+            </tr>
+            <tr>
+                <td>Fat</td>
+                <td>0.5g</td>
+            </tr>
+            <tr>
+                <td>Protein</td>
+                <td>5g</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="food-info hidden" id="Watermelon-info">
+        <div class="food-info-title">Watermelon</div>
+        <div class="food-info-description">
+            Watermelon is a flowering plant species of the Cucurbitaceae family. A scrambling and trailing vine-like
+            plant, it was originally domesticated in Africa. It is a highly cultivated fruit worldwide, having more than
+            1,000 varieties.
+        </div>
+        <table class="food-info-table">
+            <tr>
+                <th>Values per 100g</th>
+            </tr>
+            <tr>
+                <td>Cal</td>
+                <td>30</td>
+            </tr>
+            <tr>
+                <td>Carbohydrates</td>
+                <td>8g</td>
+            </tr>
+            <tr>
+                <td>Fat</td>
+                <td>0.2g</td>
+            </tr>
+            <tr>
+                <td>Protein</td>
+                <td>0.6g</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="food-info hidden" id="Strawberry-info">
+        <div class="food-info-title">Strawberry</div>
+        <div class="food-info-description">
+            The garden strawberry is a widely grown hybrid species of the genus Fragaria, collectively known as the
+            strawberries, which are cultivated worldwide for their fruit. The fruit is widely appreciated for its
+            characteristic aroma, bright red color, juicy texture, and sweetness.
+        </div>
+        <table class="food-info-table">
+            <tr>
+                <th>Values per 100g</th>
+            </tr>
+            <tr>
+                <td>Cal</td>
+                <td>32</td>
+            </tr>
+            <tr>
+                <td>Carbohydrates</td>
+                <td>8g</td>
+            </tr>
+            <tr>
+                <td>Fat</td>
+                <td>0.3g</td>
+            </tr>
+            <tr>
+                <td>Protein</td>
+                <td>0.7g</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="food-info hidden" id="Broccoli-info">
+        <div class="food-info-title">Broccoli</div>
+        <div class="food-info-description">
+            Broccoli is an edible green plant in the cabbage family whose large flowering head, stalk, and small
+            associated leaves are eaten as a vegetable. Broccoli is classified in the Italica cultivar group of the
+            species Brassica oleracea.
+        </div>
+        <table class="food-info-table">
+            <tr>
+                <th>Values per 100g</th>
+            </tr>
+            <tr>
+                <td>Cal</td>
+                <td>34</td>
+            </tr>
+            <tr>
+                <td>Carbohydrates</td>
+                <td>7g</td>
+            </tr>
+            <tr>
+                <td>Fat</td>
+                <td>0.4g</td>
+            </tr>
+            <tr>
+                <td>Protein</td>
+                <td>2.8g</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="food-info hidden" id="Bell-pepper-info">
+        <div class="food-info-title">Bell pepper</div>
+        <div class="food-info-description">
+            The bell pepper is a cultivar group of the species Capsicum annuum. Cultivars of the plant produce fruits in
+            different colors, including red, yellow, orange, green, white, and purple. Bell peppers are sometimes
+            grouped with less pungent pepper varieties as sweet peppers.
+        </div>
+        <table class="food-info-table">
+            <tr>
+                <th>Values per 100g</th>
+            </tr>
+            <tr>
+                <td>Cal</td>
+                <td>31</td>
+            </tr>
+            <tr>
+                <td>Carbohydrates</td>
+                <td>6g</td>
+            </tr>
+            <tr>
+                <td>Fat</td>
+                <td>0.3g</td>
+            </tr>
+            <tr>
+                <td>Protein</td>
+                <td>1.3g</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="food-info hidden" id="Banana-info">
+        <div class="food-info-title">Banana</div>
+        <div class="food-info-description">
+            A banana is an elongated, edible fruit – botanically a berry – produced by several kinds of large herbaceous
+            flowering plants in the genus Musa. In some countries, bananas used for cooking may be called "plantains",
+            distinguishing them from dessert bananas.
+        </div>
+        <table class="food-info-table">
+            <tr>
+                <th>Values per 100g</th>
+            </tr>
+            <tr>
+                <td>Cal</td>
+                <td>89</td>
+            </tr>
+            <tr>
+                <td>Carbohydrates</td>
+                <td>23g</td>
+            </tr>
+            <tr>
+                <td>Fat</td>
+                <td>0.3g</td>
+            </tr>
+            <tr>
+                <td>Protein</td>
+                <td>1.1g</td>
+            </tr>
+        </table>
+    </div>
+
+
+    <script>
+        ////////////////////////////////
+        ////////    SPECIFY PARAMETERS
+        ////////////////////////////////
+        const PROCESSING_SPEED = 10000;
+        const CLASSES = [
+            "Potato",
+            "Apple",
+            "Orange",
+            "Onions",
+            "Carrot",
+            "Extra",
+            "Watermelon",
+            "Strawberry",
+            "Broccoli",
+            "Bell pepper",
+            "Banana",
+        ];
+        const MODEL_FOLDER = 'model/model.json';
+        const mode = 'environment' // back camera
+        //const mode = 'user' // front camera
+
+        let currentStream;
+
+        ////////////////////////////////
+        ////////    USE THIS FUNCTION FOR INTERACTIONS
+        ////////////////////////////////
+        function interaction(predictedClass, classScores) {
+            console.log(classScores);
+            // Hide instruction text
+            const instructionText = document.querySelector('.instruction-text');
+            if (instructionText) {
+                instructionText.classList.add('hidden');
+            }
+            // Hide all food info divs
+            document.querySelectorAll('.food-info').forEach(div => {
+                div.classList.add('hidden');
+            });
+            // Show the corresponding food info div
+            const infoDiv = document.getElementById(`${predictedClass}-info`);
+            if (infoDiv) {
+                infoDiv.classList.remove('hidden');
+            }
+            document.body.style.backgroundColor = predictedClass === "hat" ? "red" : "white";
+        }
+
+        ////////////////////////////////
+        ////////    VIDEO CAPTURE AND PREDICTION LOGIC
+        ////////////////////////////////
+        async function startVideo(facingMode = mode) {
+            // Stop any existing video tracks to free up the camera
+            if (currentStream) {
+                currentStream.getTracks().forEach(track => {
+                    track.stop();
+                });
+            }
+
+            try {
+                // Request access to the camera with the specified facing mode
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode }
+                });
+
+                const videoElement = document.getElementById('video');
+                videoElement.srcObject = stream;
+                currentStream = stream;
+
+                // Return a promise that resolves when the video is ready to play
+                return new Promise(resolve => {
+                    videoElement.onloadedmetadata = () => {
+                        resolve(videoElement);
+                    };
+                });
+            } catch (err) {
+                console.error('Error accessing the camera:', err);
+            }
+        }
+
+
+        async function startPredicting() {
+            const model = await tf.loadGraphModel(MODEL_FOLDER);
+            setInterval(async () => {
+                const example = tf.browser.fromPixels(video).cast('float32');
+                const prediction = await model.predict(example.expandDims());
+                const classScores = await prediction.data();
+                const maxScoreId = classScores.indexOf(Math.max(...classScores));
+                const predictedClass = CLASSES[maxScoreId];
+
+                interaction(predictedClass, classScores);
+            }, PROCESSING_SPEED);
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            startVideo(mode);
+            startPredicting();
+        });
+    </script>
+</body>
+
+</html>
